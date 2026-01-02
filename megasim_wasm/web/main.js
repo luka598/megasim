@@ -139,6 +139,11 @@ document.addEventListener('alpine:init', () => {
 
         isBitOn(byteVal, bitIdx) {
             return (byteVal & (1 << (7 - bitIdx))) !== 0;
+        },
+
+        toggleBit(byteIdx, bitIdx) {
+            this.sim.set_byte(byteIdx, this.ram[byteIdx] ^ (1 << (7 - bitIdx)));
+            this.updateState();
         }
     }));
 });

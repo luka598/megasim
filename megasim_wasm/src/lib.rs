@@ -62,6 +62,10 @@ impl Simulator {
         self.program_str.clone()
     }
 
+    pub fn set_byte(&mut self, idx: usize, x: u8) {
+        self.chip.ram_set_byte(idx, x);
+    }
+
     pub fn step(&mut self) -> bool {
         self.chip.step()
     }

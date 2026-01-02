@@ -6,6 +6,7 @@ export class Simulator {
   [Symbol.dispose](): void;
   constructor(source: string);
   program_str(): string;
+  set_byte(idx: number, x: number): void;
   step(): boolean;
   state(): any;
 }
@@ -17,6 +18,7 @@ export interface InitOutput {
   readonly __wbg_simulator_free: (a: number, b: number) => void;
   readonly simulator_new: (a: number, b: number) => number;
   readonly simulator_program_str: (a: number) => [number, number];
+  readonly simulator_set_byte: (a: number, b: number, c: number) => void;
   readonly simulator_step: (a: number) => number;
   readonly simulator_state: (a: number) => any;
   readonly __wbindgen_malloc: (a: number, b: number) => number;

@@ -214,6 +214,13 @@ export class Simulator {
         }
     }
     /**
+     * @param {number} idx
+     * @param {number} x
+     */
+    set_byte(idx, x) {
+        wasm.simulator_set_byte(this.__wbg_ptr, idx, x);
+    }
+    /**
      * @returns {boolean}
      */
     step() {

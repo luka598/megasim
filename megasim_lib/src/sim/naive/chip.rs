@@ -101,6 +101,10 @@ impl Chip {
         }
     }
 
+    pub fn ram_set_byte(&mut self, idx: usize, x: u8) {
+        self.ram[idx] = x;
+    }
+
     pub fn get_instr_size(&self, _addr: u16) -> u16 {
         1
     }
