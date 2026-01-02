@@ -1,3 +1,3 @@
 fn main() {
-    println!("Hello, world!");
+    megasim_lib::compiler::cli();
 }

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>megasim</title>
+
+  <link rel="stylesheet" href="./main.css">
+  <script type="module" defer src="./main.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+<body>
+  <div x-data="megasim">
+    <textarea x-model="asmCode" placeholder="Type ASM here..." rows="8"></textarea>
+
+    <button @click="compileAsm()">Compile</button>
+
+    <div x-show="compiled">
+      <h2>Compiled:</h2>
+      <pre x-text="compiled"></pre>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,114 @@
+:root {
+  --bg-body: #0a0a0a;
+  --bg-input: #171717;
+  --bg-terminal: #000000;
+  
+  --text-main: #e5e5e5;
+  --text-muted: #737373;
+  --text-code: #4ade80;
+  
+  --accent: #22c55e;
+  --accent-hover: #16a34a;
+  --accent-glow: rgba(34, 197, 94, 0.2);
+  
+  --border: #262626;
+  --radius: 6px;
+  --max-width: 720px;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  padding: 3rem 1.5rem;
+  background-color: var(--bg-body);
+  color: var(--text-main);
+  font-family: system-ui, -apple-system, sans-serif;
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+body > div {
+  width: 100%;
+  max-width: var(--max-width);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+textarea {
+  width: 100%;
+  background-color: var(--bg-input);
+  color: var(--text-main);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem;
+  font-family: 'Menlo', 'Consolas', 'Courier New', monospace;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  resize: vertical;
+  min-height: 250px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+textarea::placeholder {
+  color: var(--text-muted);
+}
+
+button {
+  align-self: flex-start;
+  background-color: var(--accent);
+  color: #000000;
+  border: none;
+  padding: 0.8rem 2.5rem;
+  border-radius: var(--radius);
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+button:hover {
+  background-color: var(--accent-hover);
+}
+
+button:active {
+  transform: translateY(1px);
+}
+
+h2 {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin: 0 0 0.5rem 0;
+}
+
+pre {
+  background-color: var(--bg-terminal);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--accent);
+  padding: 1.25rem;
+  border-radius: var(--radius);
+  overflow-x: auto;
+  font-family: 'Menlo', 'Consolas', monospace;
+  font-size: 0.9rem;
+  color: var(--text-code);
+  margin: 0;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+}
