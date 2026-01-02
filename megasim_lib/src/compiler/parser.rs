@@ -246,7 +246,7 @@ pub fn parse(tokens: &[Token]) -> Vec<Statement> {
     let mut tb = Stream::new(tokens.to_vec());
 
     while !tb.end() {
-        if tb.current().is(&Token::Space) || tb.current().is(&Token::EndOfLine) {
+        if tb.current().is(&Token::Space) || tb.current().is(&Token::EndOfLine) || tb.current().is(&Token::Tab) {
             tb.advance();
         } else {
             for s in parse_line(&mut tb) {
