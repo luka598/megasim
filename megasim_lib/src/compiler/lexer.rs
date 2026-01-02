@@ -18,7 +18,9 @@ pub enum Token {
     Greater,
 
     Space,
+    Tab,
     EndOfLine,
+
     String(String),
 
     None,
@@ -39,6 +41,7 @@ impl Token {
             Token::Greater => matches!(other, Token::Greater),
 
             Token::Space => matches!(other, Token::Space),
+            Token::Tab => matches!(other, Token::Tab),
             Token::EndOfLine => matches!(other, Token::EndOfLine),
 
             Token::String(_) => matches!(other, Token::String(_)),
@@ -78,6 +81,7 @@ pub fn tokenize(text: &str) -> Vec<Token> {
             // '~' => Token::Tilde,
 
             ' ' => Token::Space,
+            '\t' => Token::Tab,
             '\n' => Token::EndOfLine,
             _ => {
                 current_string.push(c);
@@ -121,7 +125,9 @@ pub fn detokenize(tokens: &[Token]) -> String {
             Token::Greater => out.push('>'),
 
             Token::Space => out.push(' '),
+            Token::Tab => out.push('\t'),
             Token::EndOfLine => out.push('\n'),
+
             Token::None => {}
         }
         if !matches!(t, Token::EndOfLine | Token::None) {
