@@ -14,7 +14,7 @@ pub fn gen_symbols() -> HashMap<String, i64> {
     symbols.insert("eend".into(), 0x01FF); // Page 18 (512 bytes)
     symbols.insert("pagesize".into(), 64); // Page 254 (words)
 
-    // 3. I/O Registers (Mapping: I/O + 0x20)
+    // 3. I/O Registers
     // Data from Register Summary (Page 319)
     let io = [
         ("twbr", 0x00),
@@ -85,7 +85,7 @@ pub fn gen_symbols() -> HashMap<String, i64> {
         ("sreg", 0x3F),
     ];
     for (name, addr) in io {
-        symbols.insert(name.into(), addr + 0x20);
+        symbols.insert(name.into(), addr);
     }
 
     // 4. Bit Symbols (Exhaustive from Pages 9-212)

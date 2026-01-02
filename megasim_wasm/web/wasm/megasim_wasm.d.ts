@@ -1,16 +1,29 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export function compile(source: string): string;
+export class Simulator {
+  free(): void;
+  [Symbol.dispose](): void;
+  constructor(source: string);
+  program_str(): string;
+  step(): boolean;
+  state(): any;
+}
 
 export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembly.Module;
 
 export interface InitOutput {
   readonly memory: WebAssembly.Memory;
-  readonly compile: (a: number, b: number) => [number, number];
-  readonly __wbindgen_externrefs: WebAssembly.Table;
+  readonly __wbg_simulator_free: (a: number, b: number) => void;
+  readonly simulator_new: (a: number, b: number) => number;
+  readonly simulator_program_str: (a: number) => [number, number];
+  readonly simulator_step: (a: number) => number;
+  readonly simulator_state: (a: number) => any;
   readonly __wbindgen_malloc: (a: number, b: number) => number;
   readonly __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number;
+  readonly __wbindgen_exn_store: (a: number) => void;
+  readonly __externref_table_alloc: () => number;
+  readonly __wbindgen_externrefs: WebAssembly.Table;
   readonly __wbindgen_free: (a: number, b: number, c: number) => void;
   readonly __wbindgen_start: () => void;
 }

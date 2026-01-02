@@ -1,0 +1,47 @@
+// === ARITHMETIC AND LOGIC
+// AND | P26 | 1CLK | Rd, Rr
+// ANDI | P27 | 1CLK | Rd, K
+// CLR | P59 | 1CLK | Rd
+// COM | P63 | 1CLK | Rd
+// CPI | P66 | 1CLK | Rd, K
+// DEC | P68 | 1CLK | Rd
+// EOR | P73 | 1CLK | Rd, Rr
+// INC | P81 | 1CLK | Rd
+// OR | P103 | 1CLK | Rd, Rr
+// ORI | P104 | 1CLK | Rd, K
+
+// === BRANCH
+// BRCC | P33 | 1/2CLK | k
+// BREQ | P35 | 1/2CLK | k
+// BRNE | P44 | 1/2CLK | k
+// BRTC | P47 | 1/2CLK | k
+// BRTS | P48 | 1/2CLK | k
+// CPSE | P67 | 1/2/3CLK | Rd, Rr
+// RCALL | P108 | 3CLK | k
+// RET | P109 | 4CLK | None
+// RETI | P110 | 4CLK | None
+// RJMP | P111 | 2CLK | k
+// SBIS | P118 | 1/2/3CLK | A, b
+// SBRC | P121 | 1/2/3CLK | Rr, b
+
+// === DATA TRANSFER
+// IN | P80 | 1CLK | Rd, A
+// LDI | P90 | 1CLK | Rd, K
+// MOV | P96 | 1CLK | Rd, Rr
+// OUT | P105 | 1CLK | A, Rr
+// POP | P106 | 2CLK | Rd
+// PUSH | P107 | 2CLK | Rr
+
+// === BIT AND BITTEST
+// CBI | P54 | 2CLK | A, b
+// CLC | P55 | 1CLK | None
+// CLT | P60 | 1CLK | None
+// LSL | P94 | 1CLK | Rd
+// ROL | P112 | 1CLK | Rd
+// ROR | P113 | 1CLK | Rd
+// SBI | P116 | 2CLK | A, b
+// SEC | P123 | 1CLK | None
+// SEI | P124 | 1CLK | None
+// SET | P128 | 1CLK | None
+
+// === MCU CONTROL

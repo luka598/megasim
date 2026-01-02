@@ -57,6 +57,7 @@ impl Token {
 pub fn tokenize(text: &str) -> Vec<Token> {
     let mut tokens = vec![];
     let text = text.to_lowercase();
+    let text = text.replace("\r", "");
     let mut current_string: Vec<char> = vec![];
 
     for c in text.chars() {

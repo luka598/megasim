@@ -170,7 +170,7 @@ fn parse_directive(tb: &mut Stream<Token>) -> Statement {
         "cseg" => Directive::Cseg,
         "dseg" => Directive::Dseg,
         "eseg" => Directive::Dseg,
-        x => panic!("Unknown directive: \".{}\"", x),
+        x => panic!("Unknown directive: {:?}", x),
     };
 
     Statement::Directive(directive)

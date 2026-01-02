@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -9,16 +10,68 @@
   <script type="module" defer src="./main.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
-<body>
-  <div x-data="megasim">
-    <textarea x-model="asmCode" placeholder="Type ASM here..." rows="8"></textarea>
 
-    <button @click="compileAsm()">Compile</button>
+<body>
+  <div x-data="megasim" class="main-wrapper">
+
+    <div>
+      <textarea x-model="asmCode" placeholder="Type ASM here (e.g. MOV R0, 255)"></textarea>
+    </div>
+
+    <div class="control-row">
+      <button type="button" @click="compileAsm()">Compile & Load</button>
+    </div>
 
     <div x-show="compiled">
-      <h2>Compiled:</h2>
+      <h2>Compiled Binary</h2>
       <pre x-text="compiled"></pre>
+    </div>
+
+    <div class="control-row">
+      <div class="pc-display">
+        PC = <span class="pc-val" x-text="pc"></span>
+      </div>
+    </div>
+
+    <div class="control-row">
+      <button type="button" @click="manualStep()" :disabled="!sim || isRunning">Step</button>
+      <button type="button" @click="toggleRun()" :disabled="!sim" x-text="isRunning ? 'Stop' : 'Run'"
+        :style="isRunning ? 'background-color: #ef4444; color: white;' : ''">
+      </button>
+    </div>
+
+    <div class="mem-container">
+
+      <div class="mem-section">
+        <h3>Registers (R0-R31)</h3>
+        <template x-for="(byte, index) in registers" :key="'reg-'+index">
+          <div class="byte-row">
+            <span class="byte-label" x-text="'R' + index"></span>
+            <div class="bit-grid">
+              <template x-for="b in 8">
+                <div class="bit" :class="{ 'active': isBitOn(byte, b-1) }"></div>
+              </template>
+            </div>
+          </div>
+        </template>
+      </div>
+
+      <div class="mem-section">
+        <h3>I/O Registers</h3>
+        <template x-for="(byte, index) in ioRegs" :key="'io-'+index">
+          <div class="byte-row">
+            <span class="byte-label" x-text="'IO:' + (index + 32)"></span>
+            <div class="bit-grid">
+              <template x-for="b in 8">
+                <div class="bit" :class="{ 'active': isBitOn(byte, b-1) }"></div>
+              </template>
+            </div>
+          </div>
+        </template>
+      </div>
+
     </div>
   </div>
 </body>
+
 </html>

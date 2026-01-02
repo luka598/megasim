@@ -1,7 +1,7 @@
-use std::collections::HashMap;
 use crate::compiler::parser::{Directive, Expression, Function, Operator, Statement};
+use std::collections::HashMap;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Op {
     Nullary(String),
     Unary(String, i64),
@@ -18,8 +18,8 @@ enum Segment {
 
 fn get_instruction_width(mnemonic: &str) -> u64 {
     match mnemonic {
-        "jmp" | "call" | "lds" | "sts" => 4,
-        _ => 2,
+        "jmp" | "call" | "lds" | "sts" => todo!("not implemented"),
+        _ => 1,
     }
 }
 
@@ -43,9 +43,9 @@ pub fn codegen(ast: &[Statement]) -> (HashMap<u64, Op>, HashMap<u64, u64>) {
         }
     }
 
-    let mut c_pc: u64 = 0;
-    let mut d_pc: u64 = 0;
-    let mut e_pc: u64 = 0;
+    let mut cseg_pc: u64 = 0;
+    let mut dseg_pc: u64 = 0;
+    let mut eseg_pc: u64 = 0;
     let mut current_seg = Segment::Cseg;
 
     for s in ast {
@@ -56,9 +56,9 @@ pub fn codegen(ast: &[Statement]) -> (HashMap<u64, Op>, HashMap<u64, u64>) {
             Statement::Directive(Directive::Org(expr)) => {
                 let val = eval(expr, &symbols) as u64;
                 match current_seg {
-                    Segment::Cseg => c_pc = val * 2,
-                    Segment::Dseg => d_pc = val,
-                    Segment::Eseg => e_pc = val,
+                    Segment::Cseg => cseg_pc = val,
+                    Segment::Dseg => dseg_pc = val,
+                    Segment::Eseg => eseg_pc = val,
                 }
             }
             Statement::Directive(Directive::Equ(name, expr)) => {
@@ -71,9 +71,9 @@ pub fn codegen(ast: &[Statement]) -> (HashMap<u64, Op>, HashMap<u64, u64>) {
             }
             Statement::Label(name) => {
                 let addr = match current_seg {
-                    Segment::Cseg => c_pc,
-                    Segment::Dseg => d_pc,
-                    Segment::Eseg => e_pc,
+                    Segment::Cseg => cseg_pc,
+                    Segment::Dseg => dseg_pc,
+                    Segment::Eseg => eseg_pc,
                 };
                 symbols.insert(name.clone(), addr as i64);
             }
@@ -84,12 +84,12 @@ pub fn codegen(ast: &[Statement]) -> (HashMap<u64, Op>, HashMap<u64, u64>) {
                         mnemonic
                     );
                 }
-                c_pc += get_instruction_width(mnemonic);
+                cseg_pc += get_instruction_width(mnemonic);
             }
         }
     }
 
-    let mut c_pc: u64 = 0;
+    let mut cseg_pc: u64 = 0;
     let mut current_seg = Segment::Cseg;
 
     for s in ast {
@@ -100,26 +100,35 @@ pub fn codegen(ast: &[Statement]) -> (HashMap<u64, Op>, HashMap<u64, u64>) {
             Statement::Directive(Directive::Org(expr)) => {
                 let val = eval(&expr, &symbols) as u64;
                 match current_seg {
-                    Segment::Cseg => c_pc = val * 2,
-                    Segment::Dseg => d_pc = val,
-                    Segment::Eseg => e_pc = val,
+                    Segment::Cseg => cseg_pc = val,
+                    _ => {}
                 }
             }
             Statement::Instruction(mnemonic, operands) => {
-                if current_seg == Segment::Cseg {
-                    let vals: Vec<i64> = operands.iter().map(|o| eval(o, &symbols)).collect();
+                assert!(current_seg == Segment::Cseg);
 
-                    let op = match vals.len() {
-                        0 => Op::Nullary(mnemonic.clone()),
-                        1 => Op::Unary(mnemonic.clone(), vals[0]),
-                        2 => Op::Binary(mnemonic.clone(), vals[0], vals[1]),
-                        3 => Op::Ternary(mnemonic.clone(), vals[0], vals[1], vals[2]),
-                        _ => panic!("unknown arity"),
-                    };
+                let vals: Vec<i64> = match mnemonic.as_str() {
+                    "rjmp" | "rcall" | "brcc" | "breq" | "brne" | "brtc" | "brts" => {
+                        // println!(
+                        //     "{:?} {:?}",
+                        //     cseg_pc,
+                        //     eval(operands.get(0).unwrap(), &symbols)
+                        // );
+                        vec![eval(operands.get(0).unwrap(), &symbols) - (cseg_pc as i64) - 1]
+                    }
+                    _ => operands.iter().map(|o| eval(o, &symbols)).collect(),
+                };
 
-                    cseg.insert(c_pc, op);
-                    c_pc += get_instruction_width(&mnemonic);
-                }
+                let op = match vals.len() {
+                    0 => Op::Nullary(mnemonic.clone()),
+                    1 => Op::Unary(mnemonic.clone(), vals[0]),
+                    2 => Op::Binary(mnemonic.clone(), vals[0], vals[1]),
+                    3 => Op::Ternary(mnemonic.clone(), vals[0], vals[1], vals[2]),
+                    _ => panic!("unknown arity"),
+                };
+
+                cseg.insert(cseg_pc, op);
+                cseg_pc += get_instruction_width(&mnemonic);
             }
             _ => {}
         }
