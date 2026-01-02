@@ -10,6 +10,8 @@
   --accent: #22c55e;
   --accent-hover: #16a34a;
   --accent-glow: rgba(34, 197, 94, 0.2);
+
+  --accent-red: #ef4444;
   
   --border: #262626;
   --radius: 6px;
@@ -43,6 +45,7 @@ body > div {
   gap: 1.5rem;
 }
 
+/* --- Input Area --- */
 textarea {
   width: 100%;
   background-color: var(--bg-input);
@@ -68,6 +71,7 @@ textarea::placeholder {
   color: var(--text-muted);
 }
 
+/* --- Generic Buttons --- */
 button {
   align-self: flex-start;
   background-color: var(--accent);
@@ -91,6 +95,14 @@ button:active {
   transform: translateY(1px);
 }
 
+button:disabled {
+  background-color: var(--border);
+  color: var(--text-muted);
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* --- Typography & Pre --- */
 h2 {
   font-size: 0.85rem;
   color: var(--text-muted);
@@ -113,8 +125,7 @@ pre {
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
 }
 
-/* --- */
-
+/* --- Control Rows --- */
 .control-row {
   display: flex;
   align-items: center;
@@ -139,6 +150,43 @@ pre {
   font-weight: 700;
 }
 
+/* --- TAB BAR --- */
+.tab-bar {
+  display: flex;
+  gap: 2rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 2rem;
+  padding-left: 0.5rem;
+}
+
+.tab-btn {
+  background: transparent;
+  color: var(--text-muted);
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 0.75rem 0;
+  border-radius: 0;
+  
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.tab-btn:hover {
+  color: var(--text-main);
+  background: transparent;
+}
+
+.tab-btn.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+/* --- MEMORY VIEW --- */
 .mem-container {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -194,9 +242,106 @@ pre {
   box-shadow: 0 0 6px var(--accent-glow);
 }
 
-button:disabled {
-  background-color: var(--border);
+/* --- PHYSICAL VIEW --- */
+.phys-view {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  align-items: center;
+  padding: 1rem 0;
+}
+
+.phys-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.phys-label {
+  font-size: 0.8rem;
   color: var(--text-muted);
-  cursor: not-allowed;
-  transform: none;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.phys-row {
+  display: flex;
+  gap: 1rem;
+}
+
+.comp-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.bit-idx {
+  font-family: 'Menlo', monospace;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.led {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: var(--bg-input);
+  border: 2px solid var(--border);
+  transition: all 0.15s;
+}
+
+.led.on {
+  background-color: var(--accent-red);
+  border-color: var(--accent-red);
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+}
+
+.btn-phys {
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  background-color: var(--bg-input);
+  border: 2px solid var(--border);
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: all 0.1s;
+}
+
+.btn-phys:hover {
+  border-color: var(--text-muted);
+  background-color: var(--bg-input);
+}
+
+.btn-phys.pressed {
+  background-color: var(--accent);
+  border-color: var(--accent);
+  color: #000;
+  box-shadow: 0 0 8px var(--accent-glow);
+  transform: translateY(1px);
+}
+
+.btn-phys-off {
+  width: 64px;
+  height: 32px;
+  border-radius: 4px;
+  background-color: var(--bg-input);
+  border: 2px solid var(--border);
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: all 0.1s;
+}
+
+.btn-phys-off:hover {
+  border-color: var(--accent-red);
+  background-color: var(--bg-input);
 }

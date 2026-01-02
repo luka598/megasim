@@ -144,6 +144,11 @@ document.addEventListener('alpine:init', () => {
         toggleBit(byteIdx, bitIdx) {
             this.sim.set_byte(byteIdx, this.ram[byteIdx] ^ (1 << (7 - bitIdx)));
             this.updateState();
+        },
+
+        setByte(byteIdx, val) {
+            this.sim.set_byte(byteIdx, val);
+            this.updateState();
         }
     }));
 });

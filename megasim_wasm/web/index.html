@@ -14,6 +14,7 @@
 <body>
   <div x-data="megasim" class="main-wrapper">
 
+    <!-- Compiler -->
     <div>
       <textarea x-model="asmCode" placeholder="Type ASM here (e.g. MOV R0, 255)"></textarea>
     </div>
@@ -40,37 +41,89 @@
       </button>
     </div>
 
-    <div class="mem-container">
+    <!-- Wrapper for Tabs -->
+    <div x-data="{ tab: 'physical' }" style="width: 100%;">
 
-      <div class="mem-section">
-        <h3>Registers (R0-R31)</h3>
-        <template x-for="(byte, index) in registers" :key="'reg-'+index">
-          <div class="byte-row">
-            <span class="byte-label" x-text="'R' + index"></span>
-            <div class="bit-grid">
-              <template x-for="b in 8">
-                <div class="bit" :class="{ 'active': isBitOn(byte, b-1) }" @click="toggleBit(index, b-1)"></div>
-              </template>
-            </div>
-          </div>
-        </template>
+      <div class="tab-bar">
+        <button class="tab-btn" :class="{ 'active': tab === 'physical' }" @click="tab = 'physical'">Physical</button>
+        <button class="tab-btn" :class="{ 'active': tab === 'memory' }" @click="tab = 'memory'">Memory</button>
       </div>
 
-      <div class="mem-section">
-        <h3>I/O Registers</h3>
-        <template x-for="(byte, index) in ioRegs" :key="'io-'+index">
-          <div class="byte-row">
-            <span class="byte-label" x-text="'IO:' + (index + 32)"></span>
-            <div class="bit-grid">
-              <template x-for="b in 8">
-                <div class="bit" :class="{ 'active': isBitOn(byte, b-1) }" @click="toggleBit(index + 32, b-1)"></div>
-              </template>
-            </div>
+      <!-- Physical view -->
+      <div x-show="tab === 'physical'" class="phys-view">
+        
+        <!-- LEDs (Port A) -->
+        <div class="phys-section">
+          <div class="phys-label">LEDs (A)</div>
+          <div class="phys-row">
+            <template x-for="i in 8">
+              <div class="comp-wrap">
+                <div class="led"
+                  :class="{ 'on': isBitOn(ram[58], i-1) && !isBitOn(ram[59], i-1) }">
+                </div>
+                <span class="bit-idx" x-text="8-i"></span>
+              </div>
+            </template>
           </div>
-        </template>
+        </div>
+
+        <!-- Buttons (Pin B) -->
+        <div class="phys-section">
+          <div class="phys-label">Buttons (B)</div>
+          <div class="phys-row">
+            <template x-for="i in 8">
+              <div class="comp-wrap">
+                <button class="btn-phys"
+                   :class="{ 'pressed': !isBitOn(ram[54], i-1) }"
+                   @click="toggleBit(54, i-1)">
+                </button>
+                <span class="bit-idx" x-text="8-i"></span>
+              </div>
+            </template>
+                <button class="btn-phys-off"
+                   @click="setByte(54, 255)">
+                   OFF
+                </button>
+          </div>
+        </div>
+
       </div>
 
+      <!-- Memory view -->
+      <div x-show="tab === 'memory'" class="mem-container">
+
+        <div class="mem-section">
+          <h3>Registers (R0-R31)</h3>
+          <template x-for="(byte, index) in registers" :key="'reg-'+index">
+            <div class="byte-row">
+              <span class="byte-label" x-text="'R' + index"></span>
+              <div class="bit-grid">
+                <template x-for="b in 8">
+                  <div class="bit" :class="{ 'active': isBitOn(byte, b-1) }" @click="toggleBit(index, b-1)"></div>
+                </template>
+              </div>
+            </div>
+          </template>
+        </div>
+
+        <div class="mem-section">
+          <h3>I/O Registers</h3>
+          <template x-for="(byte, index) in ioRegs" :key="'io-'+index">
+            <div class="byte-row">
+              <span class="byte-label" x-text="'IO:' + (index + 32)"></span>
+              <div class="bit-grid">
+                <template x-for="b in 8">
+                  <div class="bit" :class="{ 'active': isBitOn(byte, b-1) }" @click="toggleBit(index + 32, b-1)"></div>
+                </template>
+              </div>
+            </div>
+          </template>
+        </div>
+
+      </div>
+      
     </div>
+
   </div>
 </body>
 
