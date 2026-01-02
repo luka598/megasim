@@ -1,0 +1,3 @@
+[workspace]
+resolver = "3"
+members=["megasim_cli", "megasim_lib", "megasim_wasm"]
