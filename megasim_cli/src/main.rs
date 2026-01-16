@@ -54,7 +54,7 @@ fn main() {
     for _ in 0..10_000 {
         println!("PC={} | PORTA={:?}", chip.pc, chip.ram[59]);
         // println!("{:?}", chip);
-        if !chip.step() {
+        if !chip.step(None) {
             break;
         }
     }

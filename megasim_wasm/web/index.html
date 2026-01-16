@@ -51,15 +51,14 @@
 
       <!-- Physical view -->
       <div x-show="tab === 'physical'" class="phys-view">
-        
+
         <!-- LEDs (Port A) -->
         <div class="phys-section">
           <div class="phys-label">LEDs (A)</div>
           <div class="phys-row">
             <template x-for="i in 8">
               <div class="comp-wrap">
-                <div class="led"
-                  :class="{ 'on': isBitOn(ram[58], i-1) && !isBitOn(ram[59], i-1) }">
+                <div class="led" :class="{ 'on': isBitOn(ram[58], i-1) && !isBitOn(ram[59], i-1) }">
                 </div>
                 <span class="bit-idx" x-text="8-i"></span>
               </div>
@@ -73,20 +72,47 @@
           <div class="phys-row">
             <template x-for="i in 8">
               <div class="comp-wrap">
-                <button class="btn-phys"
-                   :class="{ 'pressed': !isBitOn(ram[54], i-1) }"
-                   @click="toggleBit(54, i-1)">
+                <button class="btn-phys" :class="{ 'pressed': !isBitOn(ram[54], i-1) }" @click="toggleBit(54, i-1)">
                 </button>
                 <span class="bit-idx" x-text="8-i"></span>
               </div>
             </template>
-                <button class="btn-phys-off"
-                   @click="setByte(54, 255)">
-                   OFF
-                </button>
+            <button class="btn-phys-off" @click="setByte(54, 255)">
+              OFF
+            </button>
           </div>
         </div>
 
+        <!-- Interrupts -->
+        <div class="phys-section">
+          <div class="phys-label">Interrupts</div>
+          <div class="phys-row">
+
+            <!-- INT0 (Port D:2) -->
+            <div class="comp-wrap">
+              <!-- Using address 48 for PIND -->
+              <button class="btn-phys" :class="{ 'pressed': !isBitOn(ram[48], 8 - 3) }" @click="toggleBit(48, 8 - 3)">
+              </button>
+              <span class="bit-idx">INT0 (D:2)</span>
+            </div>
+
+            <!-- INT1 (Port D:3) -->
+            <div class="comp-wrap">
+              <button class="btn-phys" :class="{ 'pressed': !isBitOn(ram[48], 8 - 4) }" @click="toggleBit(48, 8 - 4)">
+              </button>
+              <span class="bit-idx">INT1 (D:3)</span>
+            </div>
+
+            <!-- INT2 (Port B:2) -->
+            <div class="comp-wrap">
+              <!-- Using address 54 for PINB -->
+              <button class="btn-phys" :class="{ 'pressed': !isBitOn(ram[54], 8 - 3) }" @click="toggleBit(54, 8 - 3)">
+              </button>
+              <span class="bit-idx">INT2 (B:2)</span>
+            </div>
+
+          </div>
+        </div>
       </div>
 
       <!-- Memory view -->
@@ -121,7 +147,7 @@
         </div>
 
       </div>
-      
+
     </div>
 
   </div>

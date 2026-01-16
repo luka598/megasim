@@ -13,6 +13,7 @@ use crate::sim::naive::ops::{
     data_transfer::{op_in, op_ldi, op_mov, op_out, op_pop, op_push},
 };
 
+use core::time;
 use std::collections::HashMap;
 
 #[derive(Debug, Clone, Copy, Default)]
@@ -31,12 +32,16 @@ pub struct Sreg {
 pub struct Chip {
     pub pc: u16,
     pub ram: [u8; 1120], // 0-31: R0-R31 | 32-95: I/O Reg | 96-1119: SRAM
+    pub clock_freq: u64,
 
     // hack
     // pub flash: [u16; 8192],
     pub program: HashMap<u16, Op>,
 
-    pub clock_freq: u64,
+    // also hack
+    prev_int0: bool,
+    prev_int1: bool,
+    prev_int2: bool,
 }
 
 impl Chip {
@@ -46,15 +51,20 @@ impl Chip {
         Chip {
             pc: 0,
             ram: [0; 1120],
-            program: HashMap::new(),
             clock_freq: 8_000_000,
+
+            program: HashMap::new(),
+
+            prev_int0: false,
+            prev_int1: false,
+            prev_int2: false,
         }
     }
 
     pub fn sreg_get(&self) -> Sreg {
         let val = *self.ram.get(95).unwrap();
-        
-        Sreg { 
+
+        Sreg {
             c: (val & (1 << 0)) != 0,
             z: (val & (1 << 1)) != 0,
             n: (val & (1 << 2)) != 0,
@@ -69,14 +79,30 @@ impl Chip {
     pub fn sreg_set(&mut self, sreg: &Sreg) {
         let mut val = 0u8;
 
-        if sreg.c { val |= 1 << 0; }
-        if sreg.z { val |= 1 << 1; }
-        if sreg.n { val |= 1 << 2; }
-        if sreg.v { val |= 1 << 3; }
-        if sreg.s { val |= 1 << 4; }
-        if sreg.h { val |= 1 << 5; }
-        if sreg.t { val |= 1 << 6; }
-        if sreg.i { val |= 1 << 7; }
+        if sreg.c {
+            val |= 1 << 0;
+        }
+        if sreg.z {
+            val |= 1 << 1;
+        }
+        if sreg.n {
+            val |= 1 << 2;
+        }
+        if sreg.v {
+            val |= 1 << 3;
+        }
+        if sreg.s {
+            val |= 1 << 4;
+        }
+        if sreg.h {
+            val |= 1 << 5;
+        }
+        if sreg.t {
+            val |= 1 << 6;
+        }
+        if sreg.i {
+            val |= 1 << 7;
+        }
 
         *self.ram.get_mut(95).unwrap() = val;
     }
@@ -129,7 +155,104 @@ impl Chip {
         Ok(())
     }
 
-    pub fn step(&mut self) -> bool {
+    fn _tick_interupts(&mut self) {
+        // GCIR = 91
+        // GCIR @ 6 => int0
+        // GCIR @ 7 => int1
+        // GCIR @ 5 => int2
+        // ---
+        // MCUCR = 85
+        // ISC01(1), ISC00(0) | ISC10(2), ISC11(3)
+        // 0, 0 => low
+        // 0, 1 => delta
+        // 1, 0 => falling edge
+        // 1, 1 => rising edge
+        // ISC2
+        // 0 => falling edge
+        // 1 => rising edge
+        // ---
+        // int0_signal = ??? @ ???
+        // int1_signal = ??? @ ???
+        // int2_signal = ??? @ ???
+        // ---
+        // PIND = 48
+        // PINB = 54
+        if !self.sreg_get().i {
+            return;
+        }
+
+        pub fn set_int(c: &mut Chip, new_pc: u16) {
+            c.ram[c.sp_get() as usize] = (c.pc & 0xFF) as u8;
+            c.sp_add(-1);
+            c.ram[c.sp_get() as usize] = (c.pc >> 8) as u8;
+            c.sp_add(-1);
+
+            let mut sreg = c.sreg_get();
+            sreg.i = false;
+            c.sreg_set(&sreg);
+
+            c.pc = new_pc;
+        }
+
+        let pind = self.ram[48];
+        let pinb = self.ram[54];
+        let mcucr = self.ram[85];
+        let gcir = self.ram[91];
+
+        let int0_en = ((gcir >> 6) & 1) != 0;
+        let int1_en = ((gcir >> 7) & 1) != 0;
+        let int2_en = ((gcir >> 5) & 1) != 0;
+
+        let isc0 = ((mcucr >> 0) & 0b11) as u8;
+        let isc1 = ((mcucr >> 2) & 0b11) as u8;
+        let isc2 = ((mcucr >> 6) & 0b01) as u8;
+
+        let int0 = ((pind >> 2) & 1) != 0;
+        let int1 = ((pind >> 3) & 1) != 0;
+        let int2 = ((pinb >> 2) & 1) != 0;
+
+        let int0_active = int0_en
+            && match isc0 {
+                0b00 => int0 == false,
+                0b01 => int0 != self.prev_int0,
+                0b10 => self.prev_int0 && !int0,
+                0b11 => !self.prev_int0 && int0,
+                _ => false,
+            };
+        let int1_active = int1_en
+            && match isc1 {
+                0b00 => int1 == false,
+                0b01 => int1 != self.prev_int1,
+                0b10 => self.prev_int1 && !int1,
+                0b11 => !self.prev_int1 && int1,
+                _ => false,
+            };
+        let int2_active = int2_en
+            && match isc2 {
+                0 => self.prev_int2 && !int2,
+                1 => !self.prev_int2 && int2,
+                _ => false,
+            };
+
+        if int0_active {
+            set_int(self, 2);
+        } else if int1_active {
+            set_int(self, 4);
+        } else if int2_active {
+            set_int(self, 6);
+        }
+
+        self.prev_int0 = int0;
+        self.prev_int1 = int1;
+        self.prev_int2 = int2;
+    }
+
+    fn _tick_timers(&mut self, time_delta: u64) {}
+
+    pub fn step(&mut self, time_delta: Option<u64>) -> bool {
+        self._tick_interupts();
+        self._tick_timers(time_delta.unwrap_or(1_000_000_000 / self.clock_freq));
+
         let op = match self.program.get(&self.pc) {
             Some(x) => x,
             None => {

@@ -89,7 +89,7 @@ impl Simulator {
     }
 
     pub fn step(&mut self) -> bool {
-        self.chip.step()
+        self.chip.step(None)
     }
 
     pub fn state(&self) -> JsValue {
