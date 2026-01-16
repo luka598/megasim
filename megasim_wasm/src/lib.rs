@@ -1,3 +1,4 @@
+use std::panic;
 use wasm_bindgen::prelude::*;
 use js_sys::{Object, Reflect, Uint8Array};
 use std::collections::HashMap;
@@ -6,6 +7,27 @@ use megasim_lib::{
     compiler::{Op, compile},
     sim::naive::chip::Chip,
 };
+
+#[wasm_bindgen(start)]
+pub fn init() {
+    panic::set_hook(Box::new(|info| {
+        let msg = if let Some(s) = info.payload().downcast_ref::<&str>() {
+            *s
+        } else if let Some(s) = info.payload().downcast_ref::<String>() {
+            s.as_str()
+        } else {
+            "panic occurred"
+        };
+
+        if let Some(loc) = info.location() {
+            web_sys::console::error_1(
+                &format!("panic at {}:{}: {}", loc.file(), loc.line(), msg).into(),
+            );
+        } else {
+            web_sys::console::error_1(&msg.into());
+        }
+    }));
+}
 
 fn program_to_string(
     cseg: &HashMap<u64, Op>,

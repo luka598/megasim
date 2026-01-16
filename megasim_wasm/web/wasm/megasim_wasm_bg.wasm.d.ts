@@ -1,6 +1,7 @@
 /* tslint:disable */
 /* eslint-disable */
 export const memory: WebAssembly.Memory;
+export const init: () => void;
 export const __wbg_simulator_free: (a: number, b: number) => void;
 export const simulator_new: (a: number, b: number) => number;
 export const simulator_program_str: (a: number) => [number, number];
