@@ -311,6 +311,7 @@ impl Chip {
                 "cpse" => op_cpse(self, *arg1 as u8, *arg2 as u8),
                 "sbis" => op_sbis(self, *arg1 as u8, *arg2 as u8),
                 "sbrc" => op_sbrc(self, *arg1 as u8, *arg2 as u8),
+                "sbrs" => op_sbrc(self, *arg1 as u8, *arg2 as u8),
                 // Data Transfer
                 "in" => op_in(self, *arg1 as u8, *arg2 as u8),
                 "ldi" => op_ldi(self, *arg1 as u8, *arg2 as u8),
