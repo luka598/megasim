@@ -8,7 +8,7 @@ use crate::sim::naive::ops::{
     },
     branch::{
         op_brcc, op_breq, op_brne, op_brtc, op_brts, op_cpse, op_rcall, op_ret, op_reti, op_rjmp,
-        op_sbis, op_sbrc,
+        op_sbis, op_sbrc, op_sbrs,
     },
     data_transfer::{op_in, op_ldi, op_mov, op_out, op_pop, op_push},
 };
@@ -311,7 +311,7 @@ impl Chip {
                 "cpse" => op_cpse(self, *arg1 as u8, *arg2 as u8),
                 "sbis" => op_sbis(self, *arg1 as u8, *arg2 as u8),
                 "sbrc" => op_sbrc(self, *arg1 as u8, *arg2 as u8),
-                "sbrs" => op_sbrc(self, *arg1 as u8, *arg2 as u8),
+                "sbrs" => op_sbrs(self, *arg1 as u8, *arg2 as u8),
                 // Data Transfer
                 "in" => op_in(self, *arg1 as u8, *arg2 as u8),
                 "ldi" => op_ldi(self, *arg1 as u8, *arg2 as u8),
