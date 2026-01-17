@@ -154,3 +154,22 @@ pub fn op_sbrc(c: &mut Chip, rr: u8, b: u8) -> (u8,) {
         return (1,);
     }
 }
+
+pub fn op_sbrs(c: &mut Chip, rr: u8, b: u8) -> (u8,) {
+    if b > 7 {
+        panic!("SBRS: Invalid bit {}. Must be 0-7.", b);
+    }
+
+    let val = c.ram[rr as usize];
+
+    if (val >> b) & 1 == 1 {
+        let next_pc = c.pc.wrapping_add(1);
+        let skip_size = c.get_instr_size(next_pc);
+        c.pc = next_pc.wrapping_add(skip_size);
+        return if skip_size == 2 { (3,) } else { (2,) };
+    } else {
+        c.pc = c.pc.wrapping_add(1);
+        return (1,);
+    }
+}
+

@@ -23,6 +23,7 @@
 // RJMP | P111 | 2CLK | k
 // SBIS | P118 | 1/2/3CLK | A, b
 // SBRC | P121 | 1/2/3CLK | Rr, b
+// SBRS | P122 | 1/2/3CLK | Rr, b
 
 // === DATA TRANSFER
 // IN | P80 | 1CLK | Rd, A
